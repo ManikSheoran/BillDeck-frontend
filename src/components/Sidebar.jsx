@@ -2,31 +2,31 @@ import { Link } from "react-router-dom";
 
 export default function Sidebar() {
   return (
-    <div className="w-48 min-h-screen bg-gray-800 text-white p-4 space-y-2">
-      <h2 className="text-lg font-bold mb-4">Menu</h2>
-      <nav className="space-y-2">
-        <Link to="/inventory" className="block hover:text-yellow-400">
-          Inventory List
-        </Link>
-        <Link to="/inventory/add" className="block hover:text-yellow-400">
-          Add Item
-        </Link>
-        <Link to="/billing" className="block hover:text-yellow-400">
-          Create Bill
-        </Link>
-        <Link to="/purchase" className="block hover:text-yellow-400">
-          Add Purchase
-        </Link>
-        <Link to="/udhaar/sales" className="block hover:text-yellow-400">
-          Sales Udhaar
-        </Link>
-        <Link to="/udhaar/purchases" className="block hover:text-yellow-400">
-          Purchase Udhaar
-        </Link>
-        <Link to="/notifications" className="block hover:text-yellow-400">
-          Notifications
-        </Link>
+    <>
+      <h2 className="text-2xl font-bold mb-8 text-[#653239] tracking-tight">
+        Bill Deck
+      </h2>
+      <nav className="flex flex-col gap-2">
+        <SidebarLink to="/inventory">Inventory List</SidebarLink>
+        <SidebarLink to="/inventory/add">Add Item</SidebarLink>
+        <SidebarLink to="/billing">Create Bill</SidebarLink>
+        <SidebarLink to="/purchase">Add Purchase</SidebarLink>
+        <SidebarLink to="/udhaar/sales">Sales Udhaar</SidebarLink>
+        <SidebarLink to="/udhaar/purchases">Purchase Udhaar</SidebarLink>
+        <SidebarLink to="/notifications">Notifications</SidebarLink>
       </nav>
-    </div>
+    </>
+  );
+}
+
+// eslint-disable-next-line react/prop-types
+function SidebarLink({ to, children }) {
+  return (
+    <Link
+      to={to}
+      className="px-4 py-2 rounded-lg text-[#653239] font-medium hover:bg-[#EAF9D9] hover:text-[#AF7A6D] transition-colors"
+    >
+      {children}
+    </Link>
   );
 }
