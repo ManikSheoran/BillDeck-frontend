@@ -129,38 +129,61 @@ export default function CreateBill() {
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
-    doc.setFontSize(12);
-    doc.text(
-      isSale
-        ? "Customer: " + form.customer_name
-        : "Vendor: " + form.vendor_name,
-      10,
-      10
-    );
-    doc.text("Phone: " + form.phone_no, 10, 20);
-    doc.text("Date: " + form.transaction_date, 10, 30);
-    doc.text("Due: " + form.payment_due_date, 10, 40);
-
-    let y = 60;
-    form.products.forEach((p, i) => {
-      let line = "";
-      if (isSale) {
-        line = `${i + 1}. ${p.product_name} - Qty: ${p.quantity}, Rate: ${
-          p.rate
-        }, Total: ${p.sale_price}`;
-      } else {
-        line = `${i + 1}. ${p.product_name} - Qty: ${p.quantity}, Purchase: ${
-          p.price_purchase
-        }, Selling: ${p.price_sale}, Total: ${
-          p.quantity * p.price_purchase
-        }`;
-      }
-      doc.text(line, 10, y);
-      y += 10;
+    doc.setFontSize(16);
+    doc.text(isSale ? "INVOICE" : "PURCHASE RECEIPT", 105, 18, {
+      align: "center",
     });
 
-    doc.text(`Total Amount: ₹ ${totalAmount}`, 10, y + 10);
-    doc.save(isSale ? "bill.pdf" : "purchase.pdf");
+    doc.setFontSize(11);
+    let y = 30;
+    if (isSale) {
+      doc.text(`Customer: ${form.customer_name}`, 14, y);
+    } else {
+      doc.text(`Vendor: ${form.vendor_name}`, 14, y);
+    }
+    y += 7;
+    doc.text(`Phone: ${form.phone_no}`, 14, y);
+    y += 7;
+    doc.text(`Date: ${form.transaction_date}`, 14, y);
+    y += 7;
+    doc.text(`Due: ${form.payment_due_date}`, 14, y);
+    y += 10;
+
+    // Table headers
+    const headers = isSale
+      ? ["#", "Product", "Qty", "Rate", "Total"]
+      : ["#", "Product", "Qty", "Purchase Price", "Selling Price", "Total"];
+    let colX = [14, 34, 94, 114, 144, 174];
+    headers.forEach((h, i) => {
+      doc.setFont(undefined, "bold");
+      doc.text(h, colX[i], y);
+      doc.setFont(undefined, "normal");
+    });
+    y += 7;
+
+    form.products.forEach((p, i) => {
+      doc.text(String(i + 1), colX[0], y);
+      doc.text(p.product_name, colX[1], y);
+      doc.text(String(p.quantity), colX[2], y);
+      if (isSale) {
+        doc.text(String(p.rate), colX[3], y);
+        doc.text(String(p.sale_price), colX[4], y);
+      } else {
+        doc.text(String(p.price_purchase), colX[3], y);
+        doc.text(String(p.price_sale), colX[4], y);
+        doc.text(String(p.quantity * p.price_purchase), colX[5], y);
+      }
+      y += 7;
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+    });
+
+    y += 10;
+    doc.setFont(undefined, "bold");
+    doc.text(`Total Amount: ₹ ${totalAmount}`, isSale ? colX[3] : colX[4], y);
+    doc.save(isSale ? "invoice.pdf" : "purchase.pdf");
   };
 
   const inputBase =
