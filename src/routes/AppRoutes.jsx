@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { Suspense, lazy } from "react";
 
 import Sidebar from "../components/Sidebar";
@@ -6,13 +11,24 @@ import Navbar from "../components/Navbar";
 
 // Lazy-loaded route components
 const InventoryList = lazy(() => import("../features/Inventory/InventoryList"));
-const AddItem = lazy(() => import("../features/Inventory/AddItem"));
 const CreateBill = lazy(() => import("../features/Billing/CreateBill"));
 const AddPurchase = lazy(() => import("../features/Purchase/AddPurchase"));
-const ViewSalesUdhaar = lazy(() => import("../features/Udhaar/ViewSalesUdhaar"));
-const ViewPurchaseUdhaar = lazy(() => import("../features/Udhaar/ViewPurchaseUdhaar"));
-const NotificationList = lazy(() => import("../features/Notifications/NotificationList"));
-const NotFound = () => <div className="text-center text-gray-500 mt-20 text-xl">404 – Page Not Found</div>;
+const ViewSalesUdhaar = lazy(() =>
+  import("../features/Udhaar/ViewSalesUdhaar")
+);
+const ViewPurchaseUdhaar = lazy(() =>
+  import("../features/Udhaar/ViewPurchaseUdhaar")
+);
+const NotificationList = lazy(() =>
+  import("../features/Notifications/NotificationList")
+);
+const SaleDetails = lazy(() => import("../pages/SaleDetails"));
+const PurchaseDetails = lazy(() => import("../pages/PurchaseDetails"));
+const NotFound = () => (
+  <div className="text-center text-gray-500 mt-20 text-xl">
+    404 – Page Not Found
+  </div>
+);
 
 export default function AppRoutes() {
   return (
@@ -31,16 +47,25 @@ export default function AppRoutes() {
           </header>
 
           <main className="flex-1 overflow-x-auto p-4 sm:p-6">
-            <Suspense fallback={<div className="text-gray-400 mt-10">Loading...</div>}>
+            <Suspense
+              fallback={<div className="text-gray-400 mt-10">Loading...</div>}
+            >
               <Routes>
                 <Route path="/" element={<Navigate to="/inventory" />} />
                 <Route path="/inventory" element={<InventoryList />} />
-                <Route path="/inventory/add" element={<AddItem />} />
                 <Route path="/billing" element={<CreateBill />} />
                 <Route path="/purchase" element={<AddPurchase />} />
                 <Route path="/udhaar/sales" element={<ViewSalesUdhaar />} />
-                <Route path="/udhaar/purchases" element={<ViewPurchaseUdhaar />} />
+                <Route
+                  path="/udhaar/purchases"
+                  element={<ViewPurchaseUdhaar />}
+                />
                 <Route path="/notifications" element={<NotificationList />} />
+                <Route path="/sale/:saleId" element={<SaleDetails />} />
+                <Route
+                  path="/purchase/:purchaseId"
+                  element={<PurchaseDetails />}
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

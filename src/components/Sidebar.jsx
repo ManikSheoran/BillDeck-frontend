@@ -8,7 +8,6 @@ export default function Sidebar() {
       </h2>
       <nav className="flex flex-col gap-2">
         <SidebarLink to="/inventory">Inventory List</SidebarLink>
-        <SidebarLink to="/inventory/add">Add Item</SidebarLink>
         <SidebarLink to="/billing">Create Bill</SidebarLink>
         <SidebarLink to="/purchase">Add Purchase</SidebarLink>
         <SidebarLink to="/udhaar/sales">Sales Udhaar</SidebarLink>

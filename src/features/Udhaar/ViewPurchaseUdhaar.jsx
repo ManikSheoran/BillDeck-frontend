@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getPurchaseUdhaar, clearPurchaseUdhaar } from "../../api/udhaarApi";
+import { Link } from "react-router-dom";
 
 export default function ViewPurchaseUdhaar() {
   const [udhaarList, setUdhaarList] = useState([]);
@@ -37,7 +38,7 @@ export default function ViewPurchaseUdhaar() {
           <thead className="bg-gray-50 text-gray-600 uppercase tracking-wider">
             <tr>
               <th className="border px-4 py-3">Udhar ID</th>
-              <th className="border px-4 py-3">Purchase ID</th>
+              <th className="border px-4 py-3">Purchase Details</th>
               <th className="border px-4 py-3">Date of Entry</th>
               <th className="border px-4 py-3">Date of Payment</th>
               <th className="border px-4 py-3 text-center">Actions</th>
@@ -57,7 +58,14 @@ export default function ViewPurchaseUdhaar() {
                   className="hover:bg-gray-50 transition duration-150 text-center"
                 >
                   <td className="border px-4 py-2">{entry.udhar_id}</td>
-                  <td className="border px-4 py-2">{entry.purchase_id}</td>
+                  <td className="border px-4 py-2">
+                    <Link
+                      to={`/purchase/${entry.purch_id}`}
+                      className="text-blue-600 hover:underline"
+                    >
+                      View Purchase
+                    </Link>
+                  </td>
                   <td className="border px-4 py-2">{entry.date_of_entry}</td>
                   <td className="border px-4 py-2">{entry.date_of_payment}</td>
                   <td className="border px-4 py-2">
