@@ -7,9 +7,9 @@ export default function Sidebar() {
         Bill Deck
       </h2>
       <nav className="flex flex-col gap-2">
+        <SidebarLink to="/dashboard">Dashboard</SidebarLink>
         <SidebarLink to="/inventory">Inventory List</SidebarLink>
         <SidebarLink to="/billing">Create Bill</SidebarLink>
-        <SidebarLink to="/purchase">Add Purchase</SidebarLink>
         <SidebarLink to="/udhaar/sales">Sales Udhaar</SidebarLink>
         <SidebarLink to="/udhaar/purchases">Purchase Udhaar</SidebarLink>
         <SidebarLink to="/notifications">Notifications</SidebarLink>

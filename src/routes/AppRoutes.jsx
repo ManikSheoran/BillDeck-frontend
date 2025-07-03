@@ -12,7 +12,7 @@ import Navbar from "../components/Navbar";
 // Lazy-loaded route components
 const InventoryList = lazy(() => import("../features/Inventory/InventoryList"));
 const CreateBill = lazy(() => import("../features/Billing/CreateBill"));
-const AddPurchase = lazy(() => import("../features/Purchase/AddPurchase"));
+
 const ViewSalesUdhaar = lazy(() =>
   import("../features/Udhaar/ViewSalesUdhaar")
 );
@@ -24,6 +24,8 @@ const NotificationList = lazy(() =>
 );
 const SaleDetails = lazy(() => import("../pages/SaleDetails"));
 const PurchaseDetails = lazy(() => import("../pages/PurchaseDetails"));
+const Dashboard = lazy(() => import("../pages/Dashboard"));
+
 const NotFound = () => (
   <div className="text-center text-gray-500 mt-20 text-xl">
     404 – Page Not Found
@@ -54,7 +56,7 @@ export default function AppRoutes() {
                 <Route path="/" element={<Navigate to="/inventory" />} />
                 <Route path="/inventory" element={<InventoryList />} />
                 <Route path="/billing" element={<CreateBill />} />
-                <Route path="/purchase" element={<AddPurchase />} />
+                <Route path='/dashboard' element={<Dashboard />} />
                 <Route path="/udhaar/sales" element={<ViewSalesUdhaar />} />
                 <Route
                   path="/udhaar/purchases"
