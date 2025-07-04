@@ -9,7 +9,6 @@ import { Suspense, lazy } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
-// Lazy-loaded route components
 const InventoryList = lazy(() => import("../features/Inventory/InventoryList"));
 const CreateBill = lazy(() => import("../features/Billing/CreateBill"));
 

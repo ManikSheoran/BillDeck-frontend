@@ -46,7 +46,7 @@ export default function PurchaseDetails() {
       <div className="mb-2">
         <b>Total Amount:</b> ₹{purchase.total_amount}
       </div>
-      {/* If you ever get products array, you can show it here */}
+      
       {purchase.products && purchase.products.length > 0 && (
         <div className="mt-4">
           <b>Products:</b>

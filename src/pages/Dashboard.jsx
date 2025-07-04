@@ -40,7 +40,6 @@ export default function Dashboard() {
           )
         );
 
-        // Normalize: always 7 days, fill missing with 0
         const weeklyData = dates.map((date, idx) => {
           const res = weeklyProfitLossResponses[idx];
           const arr = Array.isArray(res.data) ? res.data : [res.data];
