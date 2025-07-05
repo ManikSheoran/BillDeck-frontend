@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getPurchaseUdhaar, clearPurchaseUdhaar } from "../../api/udhaarApi";
 import { Link } from "react-router-dom";
+import { CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function ViewPurchaseUdhaar() {
   const [udhaarList, setUdhaarList] = useState([]);
@@ -29,7 +31,7 @@ export default function ViewPurchaseUdhaar() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <h2 className="text-2xl font-semibold text-[#653239] mb-6">
+      <h2 className="text-2xl font-semibold text-emerald-700 mb-6">
         Purchase Udhaar
       </h2>
 
@@ -52,16 +54,19 @@ export default function ViewPurchaseUdhaar() {
                 </td>
               </tr>
             ) : (
-              udhaarList.map((entry) => (
-                <tr
+              udhaarList.map((entry, index) => (
+                <motion.tr
                   key={entry.udhar_id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
                   className="hover:bg-gray-50 transition duration-150 text-center"
                 >
                   <td className="border px-4 py-2">{entry.udhar_id}</td>
                   <td className="border px-4 py-2">
                     <Link
                       to={`/purchase/${entry.purch_id}`}
-                      className="text-blue-600 hover:underline"
+                      className="text-emerald-600 hover:underline"
                     >
                       View Purchase
                     </Link>
@@ -71,12 +76,12 @@ export default function ViewPurchaseUdhaar() {
                   <td className="border px-4 py-2">
                     <button
                       onClick={() => handleClear(entry.udhar_id)}
-                      className="bg-[#653239] hover:bg-[#AF7A6D] text-white px-3 py-1 rounded text-sm transition"
+                      className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-sm transition"
                     >
-                      Clear
+                      <CheckCircle2 size={16} /> Clear
                     </button>
                   </td>
-                </tr>
+                </motion.tr>
               ))
             )}
           </tbody>

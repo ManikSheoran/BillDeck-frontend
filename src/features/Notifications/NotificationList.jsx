@@ -18,14 +18,19 @@ export default function NotificationList() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Udhaar Due Notifications</h2>
+    <div className="p-6 max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold text-[#653239] mb-6">
+        Udhaar Due Notifications
+      </h2>
       {notifications.length === 0 ? (
-        <p>No pending notifications.</p>
+        <p className="text-gray-500 italic">No pending notifications.</p>
       ) : (
-        <ul className="list-disc pl-5 space-y-2">
+        <ul className="space-y-3">
           {notifications.map((note, index) => (
-            <li key={index} className="p-2 bg-yellow-100 rounded">
+            <li
+              key={index}
+              className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg shadow-sm text-[#653239]"
+            >
               {note.message}
             </li>
           ))}

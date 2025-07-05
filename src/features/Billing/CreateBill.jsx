@@ -40,7 +40,6 @@ export default function CreateBill() {
     const updated = [...form.products];
     updated[index][name] = type === "number" ? Number(value) : value;
 
-    // For sale, auto-calculate sale_price if quantity or rate changes
     if (isSale && (name === "quantity" || name === "rate")) {
       const qty = Number(updated[index].quantity) || 0;
       const rate = Number(updated[index].rate) || 0;
@@ -73,7 +72,6 @@ export default function CreateBill() {
     }));
   };
 
-  // Total for sale: sum of sale_price; for purchase: sum of quantity * price_purchase
   const totalAmount = isSale
     ? form.products.reduce((sum, p) => sum + (Number(p.sale_price) || 0), 0)
     : form.products.reduce(
@@ -149,7 +147,6 @@ export default function CreateBill() {
     doc.text(`Due: ${form.payment_due_date}`, 14, y);
     y += 10;
 
-    // Table headers
     const headers = isSale
       ? ["#", "Product", "Qty", "Rate", "Total"]
       : ["#", "Product", "Qty", "Purchase Price", "Selling Price", "Total"];
@@ -187,43 +184,49 @@ export default function CreateBill() {
   };
 
   const inputBase =
-    "w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#653239]";
+    "w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-300";
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div className="flex items-center gap-4 mb-6">
-        <span
-          className={`cursor-pointer px-3 py-1 rounded-full text-sm font-semibold ${
-            isSale ? "bg-[#653239] text-white" : "bg-gray-100 text-[#653239]"
-          }`}
+        <button
+          type="button"
           onClick={() => setIsSale(true)}
+          className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
+            isSale
+              ? "bg-green-600 text-white"
+              : "bg-gray-100 text-green-800 hover:bg-green-100"
+          }`}
         >
           Sale
-        </span>
-        <span
-          className={`cursor-pointer px-3 py-1 rounded-full text-sm font-semibold ${
-            !isSale ? "bg-[#653239] text-white" : "bg-gray-100 text-[#653239]"
-          }`}
+        </button>
+        <button
+          type="button"
           onClick={() => setIsSale(false)}
+          className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
+            !isSale
+              ? "bg-green-600 text-white"
+              : "bg-gray-100 text-green-800 hover:bg-green-100"
+          }`}
         >
           Purchase
-        </span>
+        </button>
       </div>
 
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+      <h2 className="text-3xl font-bold text-green-700 mb-6">
         {isSale ? "Create Bill" : "Create Purchase"}
       </h2>
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 bg-white p-6 rounded-xl shadow"
+        className="space-y-8 bg-white p-6 rounded-2xl shadow-md border border-gray-100"
       >
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-6">
           {isSale ? (
             <div>
               <label
                 htmlFor="customer_name"
-                className="block text-sm mb-1 text-gray-600"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Customer Name
               </label>
@@ -241,7 +244,7 @@ export default function CreateBill() {
             <div>
               <label
                 htmlFor="vendor_name"
-                className="block text-sm mb-1 text-gray-600"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Vendor Name
               </label>
@@ -260,7 +263,7 @@ export default function CreateBill() {
           <div>
             <label
               htmlFor="phone_no"
-              className="block text-sm mb-1 text-gray-600"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
               Phone Number
             </label>
@@ -274,10 +277,11 @@ export default function CreateBill() {
               required
             />
           </div>
+
           <div>
             <label
               htmlFor="transaction_date"
-              className="block text-sm mb-1 text-gray-600"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
               Transaction Date
             </label>
@@ -291,10 +295,11 @@ export default function CreateBill() {
               required
             />
           </div>
+
           <div>
             <label
               htmlFor="payment_due_date"
-              className="block text-sm mb-1 text-gray-600"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
               Payment Due Date
             </label>
@@ -316,20 +321,20 @@ export default function CreateBill() {
             name="bill_paid"
             checked={form.bill_paid}
             onChange={handleChange}
-            className="w-4 h-4 accent-[#653239]"
+            className="w-4 h-4 accent-green-600"
           />
-          <span className="text-sm text-gray-700">Bill Paid</span>
+          <span className="text-sm text-gray-800">Bill Paid</span>
         </label>
 
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-800">Products</h3>
+          <h3 className="text-lg font-semibold text-green-700">Products</h3>
           {form.products.map((prod, idx) => (
             <div
               key={idx}
-              className="grid md:grid-cols-4 gap-4 relative border p-4 rounded-lg bg-gray-50"
+              className="grid md:grid-cols-4 gap-4 relative border border-gray-200 p-4 rounded-lg bg-green-50/20"
             >
               <div>
-                <label className="block text-xs text-gray-600 mb-1 capitalize">
+                <label className="block text-xs text-gray-600 mb-1">
                   Product Name
                 </label>
                 <input
@@ -342,7 +347,7 @@ export default function CreateBill() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-600 mb-1 capitalize">
+                <label className="block text-xs text-gray-600 mb-1">
                   Quantity
                 </label>
                 <input
@@ -358,7 +363,7 @@ export default function CreateBill() {
               {isSale ? (
                 <>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1 capitalize">
+                    <label className="block text-xs text-gray-600 mb-1">
                       Rate
                     </label>
                     <input
@@ -372,7 +377,7 @@ export default function CreateBill() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1 capitalize">
+                    <label className="block text-xs text-gray-600 mb-1">
                       Total
                     </label>
                     <input
@@ -387,7 +392,7 @@ export default function CreateBill() {
               ) : (
                 <>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1 capitalize">
+                    <label className="block text-xs text-gray-600 mb-1">
                       Purchase Price
                     </label>
                     <input
@@ -401,7 +406,7 @@ export default function CreateBill() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1 capitalize">
+                    <label className="block text-xs text-gray-600 mb-1">
                       Selling Price
                     </label>
                     <input
@@ -420,7 +425,7 @@ export default function CreateBill() {
                 <button
                   type="button"
                   onClick={() => removeProduct(idx)}
-                  className="absolute top-2 right-2 text-red-500 text-sm hover:text-red-700"
+                  className="absolute top-2 right-2 text-red-500 text-xs hover:text-red-700"
                 >
                   ✕
                 </button>
@@ -430,35 +435,31 @@ export default function CreateBill() {
           <button
             type="button"
             onClick={addProduct}
-            className="px-4 py-2 rounded bg-[#653239] text-white hover:bg-[#AF7A6D]"
+            className="px-4 py-2 rounded-md bg-green-600 text-white font-medium hover:bg-green-700 transition"
           >
             + Add Product
           </button>
         </div>
 
-        <div className="flex justify-end items-center mt-4">
-          <span className="text-lg font-semibold text-[#653239]">
-            Total Bill Amount:&nbsp;
-          </span>
-          <span className="text-xl font-bold text-[#653239]">
-            ₹ {totalAmount}
-          </span>
-        </div>
-
-        <div className="flex gap-4 justify-end">
-          <button
-            type="button"
-            onClick={handleDownloadPDF}
-            className="py-3 px-5 rounded-lg bg-[#653239] text-white font-semibold hover:bg-[#AF7A6D] transition"
-          >
-            Download PDF
-          </button>
-          <button
-            type="submit"
-            className="py-3 px-6 rounded-lg bg-[#653239] text-white font-semibold hover:bg-[#AF7A6D] transition"
-          >
-            {isSale ? "Create Bill" : "Create Purchase"}
-          </button>
+        <div className="flex justify-between items-center pt-6 border-t">
+          <div className="text-lg font-semibold text-green-800">
+            Total: ₹ {totalAmount}
+          </div>
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={handleDownloadPDF}
+              className="py-3 px-5 rounded-md bg-green-700 text-white hover:bg-green-800 font-semibold"
+            >
+              Download PDF
+            </button>
+            <button
+              type="submit"
+              className="py-3 px-6 rounded-md bg-green-600 text-white hover:bg-green-700 font-semibold"
+            >
+              {isSale ? "Create Bill" : "Create Purchase"}
+            </button>
+          </div>
         </div>
       </form>
     </div>
