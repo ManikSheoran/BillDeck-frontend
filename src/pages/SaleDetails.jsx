@@ -2,11 +2,19 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getSaleById } from "../api/detailsApi";
-import { ReceiptText, CalendarDays, User, ShoppingCart, IndianRupee } from "lucide-react";
+import {
+  ReceiptText,
+  CalendarDays,
+  User,
+  ShoppingCart,
+  IndianRupee,
+} from "lucide-react";
+import axios from "axios";
 
 export default function SaleDetails() {
   const { saleId } = useParams();
   const [sale, setSale] = useState(null);
+  const [customerName, setCustomerName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,6 +24,12 @@ export default function SaleDetails() {
       .then((res) => {
         setSale(res.data);
         setLoading(false);
+        if (res.data?.customer_id) {
+          axios
+            .get(`http://localhost:8000/api/customers/${res.data.customer_id}`)
+            .then((cRes) => setCustomerName(cRes.data.customer_name))
+            .catch(() => setCustomerName(""));
+        }
       })
       .catch(() => {
         setError("Failed to load sale details");
@@ -23,7 +37,8 @@ export default function SaleDetails() {
       });
   }, [saleId]);
 
-  if (loading) return <div className="p-8 text-gray-500 animate-pulse">Loading...</div>;
+  if (loading)
+    return <div className="p-8 text-gray-500 animate-pulse">Loading...</div>;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
   if (!sale) return <div className="p-8 text-gray-500">No details found.</div>;
 
@@ -33,10 +48,28 @@ export default function SaleDetails() {
         <ReceiptText className="w-6 h-6" /> Sale Details
       </h2>
 
-      <DetailRow label="Sale ID" value={sale.sales_id} icon={<ReceiptText className="w-4 h-4" />} />
-      <DetailRow label="Customer ID" value={sale.customer_id} icon={<User className="w-4 h-4" />} />
-      <DetailRow label="Date" value={sale.transaction_date} icon={<CalendarDays className="w-4 h-4" />} />
-      <DetailRow label="Total Quantity" value={sale.total_quantity} icon={<ShoppingCart className="w-4 h-4" />} />
+      <DetailRow
+        label="Sale ID"
+        value={sale.sales_id}
+        icon={<ReceiptText className="w-4 h-4" />}
+      />
+      {customerName && (
+        <DetailRow
+          label="Customer Name"
+          value={customerName}
+          icon={<User className="w-4 h-4" />}
+        />
+      )}
+      <DetailRow
+        label="Date"
+        value={sale.transaction_date}
+        icon={<CalendarDays className="w-4 h-4" />}
+      />
+      <DetailRow
+        label="Total Quantity"
+        value={sale.total_quantity}
+        icon={<ShoppingCart className="w-4 h-4" />}
+      />
       <DetailRow
         label="Total Amount"
         value={`₹${sale.total_amount}`}
@@ -49,7 +82,10 @@ export default function SaleDetails() {
           <ul className="list-disc ml-6 space-y-1 text-sm text-gray-700">
             {sale.products.map((p, i) => (
               <li key={i}>
-                <span className="font-medium text-gray-800">{p.product_name}</span> — Qty: {p.quantity}, Rate: ₹{p.rate}, Total: ₹{p.sale_price}
+                <span className="font-medium text-gray-800">
+                  {p.product_name}
+                </span>{" "}
+                — Qty: {p.quantity}, Rate: ₹{p.rate}, Total: ₹{p.sale_price}
               </li>
             ))}
           </ul>

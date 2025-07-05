@@ -19,6 +19,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Cell,
 } from "recharts";
 
 const BASE_URL = "http://localhost:8000";
@@ -46,16 +47,13 @@ export default function Dashboard() {
           });
         };
 
-        const [
-          allSalesRes,
-          salesUdhaarRes,
-          purchaseUdhaarRes,
-        ] = await Promise.all([
-          axios.get(`${BASE_URL}/api/sales/`),
-          axios.get(`${BASE_URL}/api/udhaar/sales/`),
-          axios.get(`${BASE_URL}/api/udhaar/purchases/`),
-          axios.get(`${BASE_URL}/api/purchases/`),
-        ]);
+        const [allSalesRes, salesUdhaarRes, purchaseUdhaarRes] =
+          await Promise.all([
+            axios.get(`${BASE_URL}/api/sales/`),
+            axios.get(`${BASE_URL}/api/udhaar/sales/`),
+            axios.get(`${BASE_URL}/api/udhaar/purchases/`),
+            axios.get(`${BASE_URL}/api/purchases/`),
+          ]);
 
         const todaySalesEntries = allSalesRes.data.filter(
           (sale) => sale.transaction_date === today
@@ -71,8 +69,7 @@ export default function Dashboard() {
 
         setSalesUdhaarCount(salesUdhaarRes.data.length || 0);
         setPurchaseUdhaarCount(purchaseUdhaarRes.data.length || 0);
-  
-      
+
         const dates = getLast7Dates();
         const weeklyProfitLossResponses = await Promise.all(
           dates.map((date) =>
@@ -103,7 +100,6 @@ export default function Dashboard() {
     fetchStats();
   }, []);
 
-
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-green-800 mb-6">
@@ -116,27 +112,73 @@ export default function Dashboard() {
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <StatCard label="Today's Sales" value={`₹${todaySales.toFixed(2)}`} icon={<TrendingUp />} />
-            <StatCard label="Total Sales Today" value={todaySalesCount} icon={<PackageCheck />} />
-            <StatCard label="Sales on Udhaar" value={salesUdhaarCount} icon={<HandCoins />} link="/udhaar/sales" />
-            <StatCard label="Purchases on Udhaar" value={purchaseUdhaarCount} icon={<ShoppingCart />} link="/udhaar/purchases" />
-           <StatCard label="Inventory" value="View Stock" icon={<Boxes />} link="/inventory" />
-           </div>
+            <StatCard
+              label="Today's Sales"
+              value={`₹${todaySales.toFixed(2)}`}
+              icon={<TrendingUp />}
+            />
+            <StatCard
+              label="Total Sales Today"
+              value={todaySalesCount}
+              icon={<PackageCheck />}
+            />
+            <StatCard
+              label="Sales on Udhaar"
+              value={salesUdhaarCount}
+              icon={<HandCoins />}
+              link="/udhaar/sales"
+            />
+            <StatCard
+              label="Purchases on Udhaar"
+              value={purchaseUdhaarCount}
+              icon={<ShoppingCart />}
+              link="/udhaar/purchases"
+            />
+            <StatCard
+              label="Inventory"
+              value="View Stock"
+              icon={<Boxes />}
+              link="/inventory"
+            />
+          </div>
 
           <div className="mt-10">
-            <h2 className="text-xl font-semibold text-green-800 mb-4">📊 Profit/Loss (Last 7 Days)</h2>
+            <h2 className="text-xl font-semibold text-green-800 mb-4">
+              📊 Profit/Loss (Last 7 Days)
+            </h2>
             <div className="bg-white rounded-lg shadow p-4">
               <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={profitLossData.map((d) => ({
-                  ...d,
-                  day: new Date(d.date).toLocaleDateString("en-GB", { weekday: "short" })
-                }))}>
+                <BarChart
+                  data={profitLossData.map((d) => ({
+                    ...d,
+                    day: new Date(d.date).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                    }),
+                    barColor: d.is_profit ? "#38a169" : "#e53e3e",
+                    displayAmount: d.is_profit
+                      ? `₹${d.amount}`
+                      : `-₹${Math.abs(d.amount)}`,
+                  }))}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="day" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(_, __, props) => {
+                      const { payload } = props;
+                      return payload.displayAmount;
+                    }}
+                    labelFormatter={(label) => `Day: ${label}`}
+                  />
                   <Legend />
-                  <Bar dataKey="amount" fill="#38a169" name="Amount (₹)" />
+                  <Bar dataKey="amount" name="Amount (₹)" fill="#000000">
+                    {profitLossData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.is_profit ? "#38a169" : "#e53e3e"}
+                      />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -151,7 +193,9 @@ function StatCard({ label, value, icon, link }) {
   const content = (
     <div className="bg-white shadow rounded-xl border border-green-100 p-4 flex justify-between items-center hover:bg-green-50 transition">
       <div className="flex gap-4 items-center">
-        <div className="p-3 bg-green-100 text-green-700 rounded-full">{icon}</div>
+        <div className="p-3 bg-green-100 text-green-700 rounded-full">
+          {icon}
+        </div>
         <div>
           <div className="text-sm text-gray-500">{label}</div>
           <div className="text-xl font-semibold text-green-800">{value}</div>
@@ -162,4 +206,3 @@ function StatCard({ label, value, icon, link }) {
   );
   return link ? <Link to={link}>{content}</Link> : content;
 }
-

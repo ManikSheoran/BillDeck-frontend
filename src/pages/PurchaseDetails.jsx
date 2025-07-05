@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getPurchaseById } from "../api/detailsApi";
-import { FileTextIcon, ShoppingCartIcon, CalendarDaysIcon, PackageIcon, IndianRupeeIcon } from "lucide-react";
+import {
+  FileTextIcon,
+  ShoppingCartIcon,
+  CalendarDaysIcon,
+  PackageIcon,
+  IndianRupeeIcon,
+} from "lucide-react";
+import axios from "axios";
 
 export default function PurchaseDetails() {
   const { purchaseId } = useParams();
   const [purchase, setPurchase] = useState(null);
+  const [vendorName, setVendorName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,6 +23,12 @@ export default function PurchaseDetails() {
       .then((res) => {
         setPurchase(res.data);
         setLoading(false);
+        if (res.data?.vendor_id) {
+          axios
+            .get(`http://localhost:8000/api/vendors/${res.data.vendor_id}`)
+            .then((vRes) => setVendorName(vRes.data.vendor_name))
+            .catch(() => setVendorName(""));
+        }
       })
       .catch(() => {
         setError("Failed to load purchase details");
@@ -36,23 +50,29 @@ export default function PurchaseDetails() {
       <div className="space-y-4 text-sm text-gray-700">
         <div className="flex items-center gap-2">
           <ShoppingCartIcon className="w-4 h-4 text-green-600" />
-          <span className="font-semibold">Purchase ID:</span> {purchase.purch_id}
+          <span className="font-semibold">Purchase ID:</span>{" "}
+          {purchase.purch_id}
         </div>
-        <div className="flex items-center gap-2">
-          <PackageIcon className="w-4 h-4 text-green-600" />
-          <span className="font-semibold">Vendor ID:</span> {purchase.vendor_id}
-        </div>
+        {vendorName && (
+          <div className="flex items-center gap-2">
+            <PackageIcon className="w-4 h-4 text-green-600" />
+            <span className="font-semibold">Vendor Name:</span> {vendorName}
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <CalendarDaysIcon className="w-4 h-4 text-green-600" />
-          <span className="font-semibold">Date:</span> {purchase.transaction_date}
+          <span className="font-semibold">Date:</span>{" "}
+          {purchase.transaction_date}
         </div>
         <div className="flex items-center gap-2">
           <PackageIcon className="w-4 h-4 text-green-600" />
-          <span className="font-semibold">Total Quantity:</span> {purchase.total_quantity}
+          <span className="font-semibold">Total Quantity:</span>{" "}
+          {purchase.total_quantity}
         </div>
         <div className="flex items-center gap-2">
           <IndianRupeeIcon className="w-4 h-4 text-green-600" />
-          <span className="font-semibold">Total Amount:</span> ₹{purchase.total_amount}
+          <span className="font-semibold">Total Amount:</span> ₹
+          {purchase.total_amount}
         </div>
       </div>
 
@@ -64,8 +84,9 @@ export default function PurchaseDetails() {
           <ul className="list-disc ml-6 text-sm text-gray-700 space-y-1">
             {purchase.products.map((p, i) => (
               <li key={i}>
-                <span className="font-medium">{p.product_name}</span> — Qty: {p.quantity}, Purchase: ₹
-                {p.purchase_price}, Selling: ₹{p.selling_price}
+                <span className="font-medium">{p.product_name}</span> — Qty:{" "}
+                {p.quantity}, Purchase: ₹{p.purchase_price}, Selling: ₹
+                {p.selling_price}
               </li>
             ))}
           </ul>
