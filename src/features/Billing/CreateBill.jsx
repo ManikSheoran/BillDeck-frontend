@@ -1,12 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createSale } from "../../api/salesApi";
 import { createPurchase } from "../../api/purchaseApi";
+import { getProducts } from "../../api/productApi";
 import jsPDF from "jspdf";
 
 export default function CreateBill() {
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
+
+  const [productSuggestions, setProductSuggestions] = useState([]);
+  useEffect(() => {
+    getProducts()
+      .then((res) => {
+        setProductSuggestions(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch((err) => console.error("Failed to fetch product list", err));
+  }, []);
 
   const [isSale, setIsSale] = useState(true);
 
@@ -39,6 +49,17 @@ export default function CreateBill() {
   const handleProductChange = (index, { target: { name, value, type } }) => {
     const updated = [...form.products];
     updated[index][name] = type === "number" ? Number(value) : value;
+
+    if (name === "product_name") {
+      const matchedProduct = productSuggestions.find(
+        (p) => p.product_name.toLowerCase() === value.toLowerCase()
+      );
+      if (matchedProduct) {
+        updated[index].price_purchase = matchedProduct.price_purchase;
+        updated[index].price_sale = matchedProduct.price_sale;
+        updated[index].rate = isSale ? matchedProduct.price_sale : 0;
+      }
+    }
 
     if (isSale && (name === "quantity" || name === "rate")) {
       const qty = Number(updated[index].quantity) || 0;
@@ -338,13 +359,18 @@ export default function CreateBill() {
                   Product Name
                 </label>
                 <input
-                  type="text"
-                  name="product_name"
-                  value={prod.product_name}
-                  onChange={(e) => handleProductChange(idx, e)}
-                  className={inputBase}
-                  required
-                />
+              name="product_name"
+              value={prod.product_name}
+              onChange={(e) => handleProductChange(idx, e)}
+              list={`product-list-${idx}`}
+              className={inputBase}
+              placeholder="Product Name"
+            />
+            <datalist id={`product-list-${idx}`}>
+              {productSuggestions.map((p, i) => (
+                <option key={i} value={p.product_name} />
+              ))}
+            </datalist>
               </div>
               <div>
                 <label className="block text-xs text-gray-600 mb-1">
