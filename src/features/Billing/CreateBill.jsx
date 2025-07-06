@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createSale } from "../../api/salesApi";
 import { createPurchase } from "../../api/purchaseApi";
 import { getProducts } from "../../api/productApi";
 import jsPDF from "jspdf";
+import axios from "axios";
 
 export default function CreateBill() {
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
 
+  const fileInputRef = useRef();
   const [productSuggestions, setProductSuggestions] = useState([]);
   useEffect(() => {
     getProducts()
@@ -84,6 +86,50 @@ export default function CreateBill() {
         },
       ],
     }));
+  };
+
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("image", file);
+    setUploading(true); // Show loader
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/extract-products",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      const detectedProducts = res.data.products || [];
+
+      const filled = detectedProducts.map((p) => {
+        const matchedProduct = productSuggestions.find(
+          (ps) => ps.product_name.toLowerCase() === p.product_name.toLowerCase()
+        );
+        return {
+          product_name: p.product_name,
+          quantity: p.quantity,
+          rate: isSale && matchedProduct ? matchedProduct.price_sale : 0,
+          sale_price:
+            isSale && matchedProduct
+              ? p.quantity * matchedProduct.price_sale
+              : 0,
+          price_purchase: matchedProduct ? matchedProduct.price_purchase : 0,
+          price_sale: matchedProduct ? matchedProduct.price_sale : 0,
+        };
+      });
+      setForm((prev) => ({ ...prev, products: filled }));
+    } catch (err) {
+      console.error("Image extraction failed:", err);
+    } finally {
+      setUploading(false); // Hide loader
+    }
   };
 
   const removeProduct = (index) => {
@@ -346,6 +392,48 @@ export default function CreateBill() {
           />
           <span className="text-sm text-gray-800">Bill Paid</span>
         </label>
+        <div className="flex items-center gap-4">
+          <label className="block">
+            <span className="text-sm text-gray-700">
+              Upload Bill Image (Optional)
+            </span>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="mt-1 block text-sm text-gray-500 file:mr-4 file:py-1 file:px-2
+        file:rounded-md file:border-0 file:text-sm file:font-semibold
+        file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+            />
+          </label>
+
+          {uploading && (
+            <div className="flex items-center gap-2 text-sm text-green-600">
+              <svg
+                className="animate-spin h-4 w-4 text-green-600"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                ></path>
+              </svg>
+              Processing...
+            </div>
+          )}
+        </div>
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-green-700">Products</h3>
@@ -359,18 +447,18 @@ export default function CreateBill() {
                   Product Name
                 </label>
                 <input
-              name="product_name"
-              value={prod.product_name}
-              onChange={(e) => handleProductChange(idx, e)}
-              list={`product-list-${idx}`}
-              className={inputBase}
-              placeholder="Product Name"
-            />
-            <datalist id={`product-list-${idx}`}>
-              {productSuggestions.map((p, i) => (
-                <option key={i} value={p.product_name} />
-              ))}
-            </datalist>
+                  name="product_name"
+                  value={prod.product_name}
+                  onChange={(e) => handleProductChange(idx, e)}
+                  list={`product-list-${idx}`}
+                  className={inputBase}
+                  placeholder="Product Name"
+                />
+                <datalist id={`product-list-${idx}`}>
+                  {productSuggestions.map((p, i) => (
+                    <option key={i} value={p.product_name} />
+                  ))}
+                </datalist>
               </div>
               <div>
                 <label className="block text-xs text-gray-600 mb-1">
