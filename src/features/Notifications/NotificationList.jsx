@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getUdhaarNotifications } from "../../api/notificationApi";
+import { BellIcon } from "lucide-react"; 
 
 export default function NotificationList() {
   const [notifications, setNotifications] = useState([]);
@@ -19,19 +20,25 @@ export default function NotificationList() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-[#653239] mb-6">
+      <h2 className="text-2xl font-bold text-emerald-700 mb-6 flex items-center gap-2">
+        <BellIcon className="w-6 h-6 text-emerald-600" />
         Udhaar Due Notifications
       </h2>
+
       {notifications.length === 0 ? (
-        <p className="text-gray-500 italic">No pending notifications.</p>
+        <div className="flex flex-col items-center justify-center bg-emerald-50 border border-dashed border-emerald-200 rounded-xl p-6 text-emerald-500 text-sm shadow-sm">
+          <BellIcon className="w-8 h-8 mb-2 text-emerald-300" />
+          No pending notifications.
+        </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-4">
           {notifications.map((note, index) => (
             <li
               key={index}
-              className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg shadow-sm text-[#653239]"
+              className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 p-4 rounded-lg shadow-sm text-emerald-900"
             >
-              {note.message}
+              <BellIcon className="w-5 h-5 mt-1 flex-shrink-0 text-emerald-600" />
+              <p className="text-sm leading-relaxed">{note.message}</p>
             </li>
           ))}
         </ul>

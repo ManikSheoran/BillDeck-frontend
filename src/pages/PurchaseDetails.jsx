@@ -7,6 +7,7 @@ import {
   CalendarDaysIcon,
   PackageIcon,
   IndianRupeeIcon,
+  Building2,
 } from "lucide-react";
 import axios from "axios";
 
@@ -42,54 +43,92 @@ export default function PurchaseDetails() {
     return <div className="p-8 text-gray-500">No details found.</div>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-xl animate-fade-in">
-      <h2 className="text-3xl font-bold text-green-700 mb-6 flex items-center gap-2">
-        <FileTextIcon className="w-6 h-6 text-green-600" /> Purchase Details
-      </h2>
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-md">
+      {/* Header */}
+      <div className="mb-6 border-b pb-4">
+        <h2 className="text-3xl font-bold text-emerald-700 flex items-center gap-2">
+          <FileTextIcon className="w-6 h-6 text-emerald-600" />
+          Purchase Details
+        </h2>
+      </div>
 
-      <div className="space-y-4 text-sm text-gray-700">
-        <div className="flex items-center gap-2">
-          <ShoppingCartIcon className="w-4 h-4 text-green-600" />
-          <span className="font-semibold">Purchase ID:</span>{" "}
-          {purchase.purch_id}
+      {/* Detail Cards */}
+      <div className="grid gap-4 md:grid-cols-2 text-sm text-gray-700">
+        <div className="bg-emerald-50 p-4 rounded-lg flex items-center gap-3 shadow-sm">
+          <ShoppingCartIcon className="w-5 h-5 text-emerald-600" />
+          <div>
+            <p className="font-medium">Purchase ID</p>
+            <p>#{purchase.purch_id}</p>
+          </div>
         </div>
+
         {vendorName && (
-          <div className="flex items-center gap-2">
-            <PackageIcon className="w-4 h-4 text-green-600" />
-            <span className="font-semibold">Vendor Name:</span> {vendorName}
+          <div className="bg-emerald-50 p-4 rounded-lg flex items-center gap-3 shadow-sm">
+            <Building2 className="w-5 h-5 text-emerald-600" />
+            <div>
+              <p className="font-medium">Vendor Name</p>
+              <p>{vendorName}</p>
+            </div>
           </div>
         )}
-        <div className="flex items-center gap-2">
-          <CalendarDaysIcon className="w-4 h-4 text-green-600" />
-          <span className="font-semibold">Date:</span>{" "}
-          {purchase.transaction_date}
+
+        <div className="bg-emerald-50 p-4 rounded-lg flex items-center gap-3 shadow-sm">
+          <CalendarDaysIcon className="w-5 h-5 text-emerald-600" />
+          <div>
+            <p className="font-medium">Date</p>
+            <p>{purchase.transaction_date}</p>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <PackageIcon className="w-4 h-4 text-green-600" />
-          <span className="font-semibold">Total Quantity:</span>{" "}
-          {purchase.total_quantity}
+
+        <div className="bg-emerald-50 p-4 rounded-lg flex items-center gap-3 shadow-sm">
+          <PackageIcon className="w-5 h-5 text-emerald-600" />
+          <div>
+            <p className="font-medium">Total Quantity</p>
+            <p>{purchase.total_quantity}</p>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <IndianRupeeIcon className="w-4 h-4 text-green-600" />
-          <span className="font-semibold">Total Amount:</span> ₹
-          {purchase.total_amount}
+
+        <div className="bg-emerald-50 p-4 rounded-lg flex items-center gap-3 shadow-sm md:col-span-2">
+          <IndianRupeeIcon className="w-5 h-5 text-emerald-600" />
+          <div>
+            <p className="font-medium">Total Amount</p>
+            <p>₹{purchase.total_amount}</p>
+          </div>
         </div>
       </div>
 
+      {/* Product List */}
       {purchase.products && purchase.products.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold text-green-700 mb-2 flex items-center gap-1">
-            <PackageIcon className="w-5 h-5 text-green-600" /> Products
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold text-emerald-700 mb-3 flex items-center gap-2">
+            <PackageIcon className="w-5 h-5 text-emerald-600" />
+            Products in Purchase
           </h3>
-          <ul className="list-disc ml-6 text-sm text-gray-700 space-y-1">
-            {purchase.products.map((p, i) => (
-              <li key={i}>
-                <span className="font-medium">{p.product_name}</span> — Qty:{" "}
-                {p.quantity}, Purchase: ₹{p.purchase_price}, Selling: ₹
-                {p.selling_price}
-              </li>
+          <div className="space-y-3">
+            {purchase.products.map((product, idx) => (
+              <div
+                key={idx}
+                className="border rounded-lg p-4 bg-gray-50 shadow-sm text-sm flex flex-col md:flex-row md:justify-between md:items-center"
+              >
+                <div>
+                  <p className="font-medium text-gray-800">
+                    {product.product_name}
+                  </p>
+                  <p className="text-gray-600">
+                    Quantity: {product.quantity}
+                  </p>
+                </div>
+                <div className="mt-2 md:mt-0 text-right">
+                  <p className="text-gray-600">
+                    Purchase: ₹{product.purchase_price}
+                  </p>
+                  <p className="text-gray-600">
+                    Selling: ₹{product.selling_price}
+                  </p>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>

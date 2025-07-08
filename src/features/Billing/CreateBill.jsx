@@ -5,6 +5,7 @@ import { createPurchase } from "../../api/purchaseApi";
 import { getProducts } from "../../api/productApi";
 import jsPDF from "jspdf";
 import axios from "axios";
+import autoTable from "jspdf-autotable";
 
 export default function CreateBill() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export default function CreateBill() {
   }, []);
 
   const [isSale, setIsSale] = useState(true);
+  const [submitAction, setSubmitAction] = useState("none");
 
   const [form, setForm] = useState({
     customer_name: "",
@@ -90,12 +92,41 @@ export default function CreateBill() {
 
   const [uploading, setUploading] = useState(false);
 
+  const handlePhoneNumberChange = async (phoneVal) => {
+    try {
+      const [res1, res2] = await Promise.allSettled([
+        axios.get("http://localhost:8000/api/customers", {
+          params: { customer_phone_no: phoneVal },
+        }),
+        axios.get("http://localhost:8000/api/vendors", {
+          params: { vendor_phone_no: phoneVal },
+        }),
+      ]);
+
+      if (res1.status === "fulfilled" && res1.value.data?.customer_name) {
+        setForm((prev) => ({
+          ...prev,
+          customer_name: res1.value.data.customer_name,
+        }));
+      }
+      
+      if (res2.status === "fulfilled" && res2.value.data?.vendor_name) {
+        setForm((prev) => ({
+          ...prev,
+          vendor_name: res2.value.data.vendor_name,
+        }));
+      }
+    } catch (err) {
+      console.error("Phone number lookup failed:", err);
+    }
+  };
+
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const formData = new FormData();
     formData.append("image", file);
-    setUploading(true); // Show loader
+    setUploading(true);
     try {
       const res = await axios.post(
         "http://localhost:8000/api/extract-products",
@@ -128,7 +159,7 @@ export default function CreateBill() {
     } catch (err) {
       console.error("Image extraction failed:", err);
     } finally {
-      setUploading(false); // Hide loader
+      setUploading(false);
     }
   };
 
@@ -151,6 +182,8 @@ export default function CreateBill() {
     if (!form.products.length)
       return alert("At least one product is required.");
 
+    let response;
+
     try {
       if (isSale) {
         const salePayload = {
@@ -161,14 +194,13 @@ export default function CreateBill() {
             quantity: p.quantity,
             rate: p.rate,
             sale_price: p.sale_price,
-            total_amount: totalAmount,
           })),
           transaction_date: form.transaction_date,
           bill_paid: form.bill_paid,
           payment_due_date: form.payment_due_date,
           total_amount: totalAmount,
         };
-        await createSale(salePayload);
+        response = await createSale(salePayload);
       } else {
         const purchasePayload = {
           vendor_name: form.vendor_name,
@@ -184,69 +216,89 @@ export default function CreateBill() {
           payment_due_date: form.payment_due_date,
           total_amount: totalAmount,
         };
-        await createPurchase(purchasePayload);
+        response = await createPurchase(purchasePayload);
       }
+
+      if (submitAction === "download") {
+        handleDownloadPDF(response.data);
+      }
+
       navigate("/inventory");
     } catch (err) {
       console.error("Submission failed:", err);
+    } finally {
+      setSubmitAction("none");
     }
   };
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
     doc.setFontSize(16);
-    doc.text(isSale ? "INVOICE" : "PURCHASE RECEIPT", 105, 18, {
+    doc.text(isSale ? "INVOICE" : "PURCHASE RECEIPT", pageWidth / 2, 15, {
       align: "center",
     });
 
     doc.setFontSize(11);
-    let y = 30;
-    if (isSale) {
-      doc.text(`Customer: ${form.customer_name}`, 14, y);
-    } else {
-      doc.text(`Vendor: ${form.vendor_name}`, 14, y);
-    }
-    y += 7;
-    doc.text(`Phone: ${form.phone_no}`, 14, y);
-    y += 7;
-    doc.text(`Date: ${form.transaction_date}`, 14, y);
-    y += 7;
-    doc.text(`Due: ${form.payment_due_date}`, 14, y);
-    y += 10;
+    let partyInfo = isSale
+      ? `Customer: ${form.customer_name}`
+      : `Vendor: ${form.vendor_name}`;
 
-    const headers = isSale
+    const info = [
+      partyInfo,
+      `Phone: ${form.phone_no}`,
+      `Transaction Date: ${form.transaction_date}`,
+      `Due Date: ${form.payment_due_date}`,
+    ];
+
+    info.forEach((text, i) => {
+      doc.text(text, 14, 25 + i * 6);
+    });
+
+    const tableHeaders = isSale
       ? ["#", "Product", "Qty", "Rate", "Total"]
       : ["#", "Product", "Qty", "Purchase Price", "Selling Price", "Total"];
-    let colX = [14, 34, 94, 114, 144, 174];
-    headers.forEach((h, i) => {
-      doc.setFont(undefined, "bold");
-      doc.text(h, colX[i], y);
-      doc.setFont(undefined, "normal");
-    });
-    y += 7;
 
-    form.products.forEach((p, i) => {
-      doc.text(String(i + 1), colX[0], y);
-      doc.text(p.product_name, colX[1], y);
-      doc.text(String(p.quantity), colX[2], y);
-      if (isSale) {
-        doc.text(String(p.rate), colX[3], y);
-        doc.text(String(p.sale_price), colX[4], y);
-      } else {
-        doc.text(String(p.price_purchase), colX[3], y);
-        doc.text(String(p.price_sale), colX[4], y);
-        doc.text(String(p.quantity * p.price_purchase), colX[5], y);
-      }
-      y += 7;
-      if (y > 270) {
-        doc.addPage();
-        y = 20;
-      }
+    const tableRows = form.products.map((p, i) =>
+      isSale
+        ? [i + 1, p.product_name, p.quantity, `${p.rate}`, `${p.sale_price}`]
+        : [
+            i + 1,
+            p.product_name,
+            p.quantity,
+            `${p.price_purchase}`,
+            `${p.price_sale}`,
+            `${(p.quantity * p.price_purchase).toFixed(2)}`,
+          ]
+    );
+
+    autoTable(doc, {
+      startY: 55,
+      head: [tableHeaders],
+      body: tableRows,
+      styles: {
+        fontSize: 10,
+        cellPadding: 3,
+        overflow: "linebreak",
+      },
+      headStyles: {
+        fillColor: [46, 125, 50], // dark green
+        textColor: 255,
+      },
+      margin: { left: 14, right: 14 },
     });
 
-    y += 10;
+    const finalY = doc.lastAutoTable.finalY || 75;
+    doc.setFontSize(12);
     doc.setFont(undefined, "bold");
-    doc.text(`Total Amount: ₹ ${totalAmount}`, isSale ? colX[3] : colX[4], y);
+    doc.text(
+      `Total Amount:  ${totalAmount.toFixed(2)} rupees only`,
+      pageWidth - 14,
+      finalY + 10,
+      { align: "right" }
+    );
+
     doc.save(isSale ? "invoice.pdf" : "purchase.pdf");
   };
 
@@ -289,6 +341,25 @@ export default function CreateBill() {
         className="space-y-8 bg-white p-6 rounded-2xl shadow-md border border-gray-100"
       >
         <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label
+              htmlFor="phone_no"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Phone Number (Optional)
+            </label>
+            <input
+              id="phone_no"
+              name="phone_no"
+              type="text"
+              value={form.phone_no}
+              onChange={async (e) => {
+                await handleChange(e);
+                await handlePhoneNumberChange(e.target.value);
+              }}
+              className={inputBase}
+            />
+          </div>
           {isSale ? (
             <div>
               <label
@@ -326,24 +397,6 @@ export default function CreateBill() {
               />
             </div>
           )}
-
-          <div>
-            <label
-              htmlFor="phone_no"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Phone Number
-            </label>
-            <input
-              id="phone_no"
-              name="phone_no"
-              type="text"
-              value={form.phone_no}
-              onChange={handleChange}
-              className={inputBase}
-              required
-            />
-          </div>
 
           <div>
             <label
@@ -557,18 +610,20 @@ export default function CreateBill() {
 
         <div className="flex justify-between items-center pt-6 border-t">
           <div className="text-lg font-semibold text-green-800">
-            Total: ₹ {totalAmount}
+            Total: {totalAmount}
           </div>
           <div className="flex gap-4">
             <button
-              type="button"
-              onClick={handleDownloadPDF}
+              type="submit"
+              onClick={() => setSubmitAction("download")}
               className="py-3 px-5 rounded-md bg-green-700 text-white hover:bg-green-800 font-semibold"
             >
               Download PDF
             </button>
+
             <button
               type="submit"
+              onClick={() => setSubmitAction("submit")}
               className="py-3 px-6 rounded-md bg-green-600 text-white hover:bg-green-700 font-semibold"
             >
               {isSale ? "Create Bill" : "Create Purchase"}

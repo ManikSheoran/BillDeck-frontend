@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
+/* --- Main Component --- */
 export default function SaleDetails() {
   const { saleId } = useParams();
   const [sale, setSale] = useState(null);
@@ -43,65 +44,83 @@ export default function SaleDetails() {
   if (!sale) return <div className="p-8 text-gray-500">No details found.</div>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-gray-100 animate-fade-in">
-      <h2 className="text-2xl font-bold mb-6 text-[#2f855a] flex items-center gap-2">
-        <ReceiptText className="w-6 h-6" /> Sale Details
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow border border-gray-100">
+      {/* Header */}
+      <h2 className="text-3xl font-bold text-emerald-700 mb-6 flex items-center gap-2">
+        <ReceiptText className="w-6 h-6 text-emerald-600" /> Sale Details
       </h2>
 
-      <DetailRow
-        label="Sale ID"
-        value={sale.sales_id}
-        icon={<ReceiptText className="w-4 h-4" />}
-      />
-      {customerName && (
-        <DetailRow
-          label="Customer Name"
-          value={customerName}
-          icon={<User className="w-4 h-4" />}
+      {/* Details Section */}
+      <div className="grid gap-4 md:grid-cols-2 text-sm text-gray-700">
+        <DetailCard
+          label="Sale ID"
+          value={sale.sales_id}
+          icon={<ReceiptText className="w-5 h-5" />}
         />
-      )}
-      <DetailRow
-        label="Date"
-        value={sale.transaction_date}
-        icon={<CalendarDays className="w-4 h-4" />}
-      />
-      <DetailRow
-        label="Total Quantity"
-        value={sale.total_quantity}
-        icon={<ShoppingCart className="w-4 h-4" />}
-      />
-      <DetailRow
-        label="Total Amount"
-        value={`₹${sale.total_amount}`}
-        icon={<IndianRupee className="w-4 h-4" />}
-      />
+        {customerName && (
+          <DetailCard
+            label="Customer Name"
+            value={customerName}
+            icon={<User className="w-5 h-5" />}
+          />
+        )}
+        <DetailCard
+          label="Date"
+          value={sale.transaction_date}
+          icon={<CalendarDays className="w-5 h-5" />}
+        />
+        <DetailCard
+          label="Total Quantity"
+          value={sale.total_quantity}
+          icon={<ShoppingCart className="w-5 h-5" />}
+        />
+        <DetailCard
+          label="Total Amount"
+          value={`₹${sale.total_amount}`}
+          icon={<IndianRupee className="w-5 h-5" />}
+        />
+      </div>
 
+      {/* Product Section */}
       {sale.products && sale.products.length > 0 && (
-        <div className="mt-6">
-          <h4 className="font-semibold text-[#2f855a] mb-2">Products:</h4>
-          <ul className="list-disc ml-6 space-y-1 text-sm text-gray-700">
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold text-emerald-700 mb-3 flex items-center gap-2">
+            <ShoppingCart className="w-5 h-5 text-emerald-600" />
+            Products Sold
+          </h3>
+
+          <div className="space-y-3">
             {sale.products.map((p, i) => (
-              <li key={i}>
-                <span className="font-medium text-gray-800">
-                  {p.product_name}
-                </span>{" "}
-                — Qty: {p.quantity}, Rate: ₹{p.rate}, Total: ₹{p.sale_price}
-              </li>
+              <div
+                key={i}
+                className="border rounded-lg p-4 bg-gray-50 shadow-sm text-sm flex flex-col md:flex-row md:justify-between md:items-center"
+              >
+                <div>
+                  <p className="font-medium text-gray-800">
+                    {p.product_name}
+                  </p>
+                  <p className="text-gray-600">Qty: {p.quantity}</p>
+                </div>
+                <div className="mt-2 md:mt-0 text-right">
+                  <p className="text-gray-600">Rate: ₹{p.rate}</p>
+                  <p className="text-gray-600">Total: ₹{p.sale_price}</p>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-function DetailRow({ label, value, icon }) {
+function DetailCard({ label, value, icon }) {
   return (
-    <div className="flex items-center gap-2 mb-3 text-gray-700">
-      <div className="text-[#2f855a]">{icon}</div>
-      <div className="text-sm">
-        <span className="font-semibold text-gray-800 mr-1">{label}:</span>
-        {value}
+    <div className="bg-emerald-50 p-4 rounded-lg flex items-center gap-3 shadow-sm">
+      <div className="text-emerald-600">{icon}</div>
+      <div>
+        <p className="text-sm font-medium text-gray-800">{label}</p>
+        <p className="text-sm">{value}</p>
       </div>
     </div>
   );

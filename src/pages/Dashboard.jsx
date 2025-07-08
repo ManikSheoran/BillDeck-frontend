@@ -24,6 +24,26 @@ import {
 
 const BASE_URL = "http://localhost:8000";
 
+function StatCard({ label, value, icon, link }) {
+  const content = (
+    <div className="bg-white shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 rounded-xl p-4 flex justify-between items-center hover:bg-emerald-50">
+      <div className="flex gap-4 items-center">
+        <div className="p-3 bg-emerald-100 text-emerald-700 rounded-full">
+          {icon}
+        </div>
+        <div>
+          <div className="text-xs text-gray-500 uppercase tracking-wide">
+            {label}
+          </div>
+          <div className="text-lg font-bold text-emerald-800">{value}</div>
+        </div>
+      </div>
+      {link && <ArrowRight className="text-emerald-600" size={20} />}
+    </div>
+  );
+  return link ? <Link to={link}>{content}</Link> : content;
+}
+
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -52,7 +72,6 @@ export default function Dashboard() {
             axios.get(`${BASE_URL}/api/sales/`),
             axios.get(`${BASE_URL}/api/udhaar/sales/`),
             axios.get(`${BASE_URL}/api/udhaar/purchases/`),
-            axios.get(`${BASE_URL}/api/purchases/`),
           ]);
 
         const todaySalesEntries = allSalesRes.data.filter(
@@ -102,11 +121,12 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-green-800 mb-6">
-        🛍️ Store Dashboard Overview
+      <h1 className="text-3xl font-bold text-emerald-800 mb-6">
+        🛍️ Store Dashboard
       </h1>
+
       {loading ? (
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-gray-600 animate-pulse">Loading data...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
@@ -142,19 +162,18 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="mt-10">
-            <h2 className="text-xl font-semibold text-green-800 mb-4">
-              📊 Profit/Loss (Last 7 Days)
+          <div className="mt-12">
+            <h2 className="text-xl font-semibold text-emerald-800 mb-4">
+              📈 Profit / Loss - Last 7 Days
             </h2>
-            <div className="bg-white rounded-lg shadow p-4">
-              <ResponsiveContainer width="100%" height={250}>
+            <div className="bg-white rounded-xl shadow border border-gray-100 p-4">
+              <ResponsiveContainer width="100%" height={260}>
                 <BarChart
                   data={profitLossData.map((d) => ({
                     ...d,
                     day: new Date(d.date).toLocaleDateString("en-GB", {
                       weekday: "short",
                     }),
-                    barColor: d.is_profit ? "#38a169" : "#e53e3e",
                     displayAmount: d.is_profit
                       ? `₹${d.amount}`
                       : `-₹${Math.abs(d.amount)}`,
@@ -164,14 +183,12 @@ export default function Dashboard() {
                   <XAxis dataKey="day" />
                   <YAxis />
                   <Tooltip
-                    formatter={(_, __, props) => {
-                      const { payload } = props;
-                      return payload.displayAmount;
-                    }}
-                    labelFormatter={(label) => `Day: ${label}`}
+                    formatter={(value, _, props) =>
+                      props?.payload?.displayAmount
+                    }
                   />
                   <Legend />
-                  <Bar dataKey="amount" name="Amount (₹)" fill="#000000">
+                  <Bar dataKey="amount" name="Net (₹)">
                     {profitLossData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
@@ -187,22 +204,4 @@ export default function Dashboard() {
       )}
     </div>
   );
-}
-
-function StatCard({ label, value, icon, link }) {
-  const content = (
-    <div className="bg-white shadow rounded-xl border border-green-100 p-4 flex justify-between items-center hover:bg-green-50 transition">
-      <div className="flex gap-4 items-center">
-        <div className="p-3 bg-green-100 text-green-700 rounded-full">
-          {icon}
-        </div>
-        <div>
-          <div className="text-sm text-gray-500">{label}</div>
-          <div className="text-xl font-semibold text-green-800">{value}</div>
-        </div>
-      </div>
-      {link && <ArrowRight className="text-green-600" size={20} />}
-    </div>
-  );
-  return link ? <Link to={link}>{content}</Link> : content;
 }

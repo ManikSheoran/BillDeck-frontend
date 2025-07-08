@@ -31,62 +31,69 @@ export default function ViewPurchaseUdhaar() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <h2 className="text-2xl font-semibold text-emerald-700 mb-6">
+      <motion.h2
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-3xl font-bold text-emerald-700 mb-6"
+      >
         Purchase Udhaar
-      </h2>
+      </motion.h2>
 
-      <div className="overflow-x-auto bg-white shadow rounded-xl">
-        <table className="min-w-full border border-gray-200 text-sm">
-          <thead className="bg-gray-50 text-gray-600 uppercase tracking-wider">
-            <tr>
-              <th className="border px-4 py-3">Udhar ID</th>
-              <th className="border px-4 py-3">Purchase Details</th>
-              <th className="border px-4 py-3">Date of Entry</th>
-              <th className="border px-4 py-3">Date of Payment</th>
-              <th className="border px-4 py-3 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {udhaarList.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="text-center p-6 text-gray-500">
-                  No outstanding purchases.
-                </td>
-              </tr>
-            ) : (
-              udhaarList.map((entry, index) => (
-                <motion.tr
-                  key={entry.udhar_id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="hover:bg-gray-50 transition duration-150 text-center"
+      {udhaarList.length === 0 ? (
+        <div className="text-center py-10 text-gray-500 text-lg">
+          No outstanding purchases.
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-6">
+          {udhaarList.map((entry, index) => (
+            <motion.div
+              key={entry.udhar_id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="bg-white border border-gray-200 shadow p-5 flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Udhaar ID: #{entry.udhar_id}
+                  </h3>
+                  <span className="text-xs text-white bg-red-500 px-2 py-0.5 rounded-full">
+                    Pending
+                  </span>
+                </div>
+
+                <div className="text-sm text-gray-600">
+                  <strong>Purchase:</strong>{" "}
+                  <Link
+                    to={`/purchase/${entry.purch_id}`}
+                    className="text-emerald-600 hover:underline"
+                  >
+                    View Purchase
+                  </Link>
+                </div>
+
+                <div className="text-sm text-gray-600">
+                  <strong>Date of Entry:</strong> {entry.date_of_entry}
+                </div>
+                <div className="text-sm text-gray-600">
+                  <strong>Payment Due:</strong> {entry.date_of_payment}
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <button
+                  onClick={() => handleClear(entry.udhar_id)}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-md flex items-center justify-center gap-2 transition"
                 >
-                  <td className="border px-4 py-2">{entry.udhar_id}</td>
-                  <td className="border px-4 py-2">
-                    <Link
-                      to={`/purchase/${entry.purch_id}`}
-                      className="text-emerald-600 hover:underline"
-                    >
-                      View Purchase
-                    </Link>
-                  </td>
-                  <td className="border px-4 py-2">{entry.date_of_entry}</td>
-                  <td className="border px-4 py-2">{entry.date_of_payment}</td>
-                  <td className="border px-4 py-2">
-                    <button
-                      onClick={() => handleClear(entry.udhar_id)}
-                      className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1 rounded text-sm transition"
-                    >
-                      <CheckCircle2 size={16} /> Clear
-                    </button>
-                  </td>
-                </motion.tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+                  <CheckCircle2 size={18} /> Clear Udhaar
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
