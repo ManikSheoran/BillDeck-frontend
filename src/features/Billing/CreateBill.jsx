@@ -90,8 +90,6 @@ export default function CreateBill() {
     }));
   };
 
-  const [uploading, setUploading] = useState(false);
-
   const handlePhoneNumberChange = async (phoneVal) => {
     try {
       const [res1, res2] = await Promise.allSettled([
@@ -109,7 +107,7 @@ export default function CreateBill() {
           customer_name: res1.value.data.customer_name,
         }));
       }
-      
+
       if (res2.status === "fulfilled" && res2.value.data?.vendor_name) {
         setForm((prev) => ({
           ...prev,
@@ -121,6 +119,7 @@ export default function CreateBill() {
     }
   };
 
+  const [uploading, setUploading] = useState(false);
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -139,22 +138,27 @@ export default function CreateBill() {
       );
       const detectedProducts = res.data.products || [];
 
-      const filled = detectedProducts.map((p) => {
+      let filled = detectedProducts.map((p) => {
         const matchedProduct = productSuggestions.find(
           (ps) => ps.product_name.toLowerCase() === p.product_name.toLowerCase()
         );
+        const quantity = Math.min(p.quantity, matchedProduct?.quantity || 0);
+
         return {
           product_name: p.product_name,
-          quantity: p.quantity,
+          quantity,
           rate: isSale && matchedProduct ? matchedProduct.price_sale : 0,
           sale_price:
-            isSale && matchedProduct
-              ? p.quantity * matchedProduct.price_sale
-              : 0,
+            isSale && matchedProduct ? quantity * matchedProduct.price_sale : 0,
           price_purchase: matchedProduct ? matchedProduct.price_purchase : 0,
           price_sale: matchedProduct ? matchedProduct.price_sale : 0,
         };
       });
+
+      if (isSale) {
+        filled = filled.filter((product) => product.quantity > 0); 
+      }
+
       setForm((prev) => ({ ...prev, products: filled }));
     } catch (err) {
       console.error("Image extraction failed:", err);
@@ -194,6 +198,7 @@ export default function CreateBill() {
             quantity: p.quantity,
             rate: p.rate,
             sale_price: p.sale_price,
+            total_amount: totalAmount,
           })),
           transaction_date: form.transaction_date,
           bill_paid: form.bill_paid,
