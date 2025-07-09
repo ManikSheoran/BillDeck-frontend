@@ -156,7 +156,7 @@ export default function CreateBill() {
       });
 
       if (isSale) {
-        filled = filled.filter((product) => product.quantity > 0); 
+        filled = filled.filter((product) => product.quantity > 0);
       }
 
       setForm((prev) => ({ ...prev, products: filled }));
@@ -527,9 +527,11 @@ export default function CreateBill() {
                   name="quantity"
                   value={prod.quantity}
                   onChange={(e) => handleProductChange(idx, e)}
+                  onWheel={(e) => e.target.blur()}
                   className={inputBase}
                   required
                   min={0}
+                  step="any"
                 />
               </div>
               {isSale ? (
@@ -543,9 +545,11 @@ export default function CreateBill() {
                       name="rate"
                       value={prod.rate}
                       onChange={(e) => handleProductChange(idx, e)}
+                      onWheel={(e) => e.target.blur()}
                       className={inputBase}
                       required
                       min={0}
+                      step="any"
                     />
                   </div>
                   <div>
@@ -572,9 +576,11 @@ export default function CreateBill() {
                       name="price_purchase"
                       value={prod.price_purchase}
                       onChange={(e) => handleProductChange(idx, e)}
+                      onWheel={(e) => e.target.blur()}
                       className={inputBase}
                       required
                       min={0}
+                      step="any"
                     />
                   </div>
                   <div>
@@ -586,9 +592,11 @@ export default function CreateBill() {
                       name="price_sale"
                       value={prod.price_sale}
                       onChange={(e) => handleProductChange(idx, e)}
+                      onWheel={(e) => e.target.blur()}
                       className={inputBase}
                       required
                       min={0}
+                      step="any"
                     />
                   </div>
                 </>

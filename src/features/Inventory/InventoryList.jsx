@@ -42,7 +42,7 @@ export default function InventoryList() {
         ...newProduct,
         price_purchase: parseFloat(newProduct.price_purchase),
         price_sale: parseFloat(newProduct.price_sale),
-        quantity: parseInt(newProduct.quantity),
+        quantity: parseFloat(newProduct.quantity),
       });
       setShowForm(false);
       setNewProduct({
@@ -194,6 +194,9 @@ export default function InventoryList() {
                       price_purchase: e.target.value,
                     })
                   }
+                  onWheel={(e) => e.target.blur()}
+                  step="any"
+                  min="0"
                   required
                   className="w-full border border-gray-300 rounded px-3 py-2"
                 />
@@ -204,6 +207,9 @@ export default function InventoryList() {
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, price_sale: e.target.value })
                   }
+                  onWheel={(e) => e.target.blur()}
+                  step="any"
+                  min="0"
                   required
                   className="w-full border border-gray-300 rounded px-3 py-2"
                 />
@@ -214,6 +220,9 @@ export default function InventoryList() {
                   onChange={(e) =>
                     setNewProduct({ ...newProduct, quantity: e.target.value })
                   }
+                  onWheel={(e) => e.target.blur()}
+                  step="any"
+                  min="0"
                   required
                   className="w-full border border-gray-300 rounded px-3 py-2"
                 />
