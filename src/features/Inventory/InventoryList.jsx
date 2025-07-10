@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { getProducts, deleteProduct } from "../../api/productApi";
 import { Trash2, Plus } from "lucide-react";

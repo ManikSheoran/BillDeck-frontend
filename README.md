@@ -8,6 +8,7 @@ A modern, feature-rich web application for managing sales, purchases, inventory,
 *   **Inventory Management:** Easily add, view, and delete products from your inventory. Low-stock items are automatically highlighted.
 *   **Smart Billing:** A unified interface to create detailed bills for both sales and purchases.
 *   **AI-Powered Bill Scanning:** Upload an image of a bill, and the application will automatically extract the products and quantities, saving you manual entry time.
+*   **AI-Powered Data Chat (Shaayak):** Ask questions in natural language to query your sales, inventory, and financial data. Get instant answers, the generated SQL, and results in a clear table format.
 *   **Udhaar (Credit) Tracking:** Keep a clear record of sales and purchases made on credit. Easily mark them as cleared once the payment is settled.
 *   **PDF Generation:** Instantly generate and download professional-looking PDF invoices for sales and receipts for purchases.
 *   **Due Date Notifications:** Stay on top of your finances with a dedicated page for notifications about upcoming udhaar payment due dates.
@@ -84,4 +85,3 @@ src/
 └── App.jsx           # Main application component
 └── main.jsx          # Entry point of the application
 ```
-
