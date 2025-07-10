@@ -6,8 +6,8 @@ import {
   FileText,
   HandCoins,
   ShoppingCart,
-  Bell,
   Menu,
+  BotMessageSquare ,
   X,
 } from "lucide-react";
 
@@ -17,7 +17,7 @@ const navLinks = [
   { to: "/billing", label: "Billing", icon: FileText },
   { to: "/udhaar/sales", label: "Sales on Udhaar", icon: HandCoins },
   { to: "/udhaar/purchases", label: "Purchases on Udhaar", icon: ShoppingCart },
-  { to: "/notifications", label: "Notifications", icon: Bell },
+  { to: "/chat", label: "Chat", icon: BotMessageSquare  },
 ];
 
 export default function Navbar() {

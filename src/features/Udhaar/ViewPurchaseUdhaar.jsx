@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
-import { getPurchaseUdhaar, clearPurchaseUdhaar } from "../../api/udhaarApi";
+import {
+  getPurchaseUdhaar,
+  clearPurchaseUdhaar,
+  sendPurchaseUdhaarSms,
+} from "../../api/udhaarApi";
 import { Link } from "react-router-dom";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Bell } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ViewPurchaseUdhaar() {
@@ -22,6 +26,16 @@ export default function ViewPurchaseUdhaar() {
       fetchUdhaar();
     } catch (error) {
       console.error("Failed to clear purchase udhaar:", error);
+    }
+  };
+
+  const handleSendSms = async (udhar_id) => {
+    try {
+      await sendPurchaseUdhaarSms(udhar_id);
+      alert("SMS sent successfully!");
+    } catch (error) {
+      console.error("Failed to send SMS:", error);
+      alert("Failed to send SMS");
     }
   };
 
@@ -82,12 +96,18 @@ export default function ViewPurchaseUdhaar() {
                 </div>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 grid grid-cols-2 gap-2">
                 <button
                   onClick={() => handleClear(entry.udhar_id)}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-md flex items-center justify-center gap-2 transition"
                 >
                   <CheckCircle2 size={18} /> Clear Udhaar
+                </button>
+                <button
+                  onClick={() => handleSendSms(entry.udhar_id)}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-md flex items-center justify-center gap-2 transition"
+                >
+                  <Bell size={18} /> Send SMS
                 </button>
               </div>
             </motion.div>

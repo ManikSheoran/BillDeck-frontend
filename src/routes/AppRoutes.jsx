@@ -17,9 +17,9 @@ const ViewSalesUdhaar = lazy(() =>
 const ViewPurchaseUdhaar = lazy(() =>
   import("../features/Udhaar/ViewPurchaseUdhaar")
 );
-const NotificationList = lazy(() =>
-  import("../features/Notifications/NotificationList")
-);
+
+const Chat = lazy(() => import("../features/Chat/Chat"));
+
 const SaleDetails = lazy(() => import("../pages/SaleDetails"));
 const PurchaseDetails = lazy(() => import("../pages/PurchaseDetails"));
 const Dashboard = lazy(() => import("../pages/Dashboard"));
@@ -53,12 +53,12 @@ export default function AppRoutes() {
                 path="/udhaar/purchases"
                 element={<ViewPurchaseUdhaar />}
               />
-              <Route path="/notifications" element={<NotificationList />} />
               <Route path="/sale/:saleId" element={<SaleDetails />} />
               <Route
                 path="/purchase/:purchaseId"
                 element={<PurchaseDetails />}
               />
+              <Route path="/chat" element={<Chat />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
