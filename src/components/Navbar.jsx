@@ -17,7 +17,7 @@ const navLinks = [
   { to: "/billing", label: "Billing", icon: FileText },
   { to: "/udhaar/sales", label: "Sales on Udhaar", icon: HandCoins },
   { to: "/udhaar/purchases", label: "Purchases on Udhaar", icon: ShoppingCart },
-  { to: "/chat", label: "Chat", icon: BotMessageSquare  },
+  { to: "/chat", label: "Sahaayak AI", icon: BotMessageSquare  },
 ];
 
 export default function Navbar() {

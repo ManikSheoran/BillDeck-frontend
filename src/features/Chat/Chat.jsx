@@ -5,7 +5,6 @@ import { SendHorizonal, Loader2 } from "lucide-react";
 
 export default function Chat() {
   const [prompt, setPrompt] = useState("");
-  const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
 
@@ -13,25 +12,37 @@ export default function Chat() {
     e.preventDefault();
     if (!prompt.trim()) return;
 
-    setLoading(true);
-    setResponse(null);
-
     const userMessage = prompt;
     setHistory((prev) => [...prev, { sender: "user", text: userMessage }]);
     setPrompt("");
+    setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/ai/sql/", {
-        prompt: userMessage,
+      const res = await axios.post("http://localhost:8000/api/ai/sql/", null, {
+        params: { prompt: userMessage },
       });
-      const serverResponse = res.data.response || "No response received.";
-      setResponse(serverResponse);
-      setHistory((prev) => [...prev, { sender: "bot", text: serverResponse }]);
+
+      const data = res.data;
+
+      const botMsg = {
+        sender: "bot",
+        text: data.answer || "No response.",
+        query: data.query || null,
+        table:
+          data.columns && data.data
+            ? { columns: data.columns, rows: data.data }
+            : null,
+        error: data.error || null,
+      };
+
+      setHistory((prev) => [...prev, botMsg]);
     } catch (error) {
       console.error("Error:", error);
       const errorMsg = "Something went wrong. Please try again.";
-      setResponse(errorMsg);
-      setHistory((prev) => [...prev, { sender: "bot", text: errorMsg }]);
+      setHistory((prev) => [
+        ...prev,
+        { sender: "bot", text: errorMsg, error: errorMsg },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -45,7 +56,7 @@ export default function Chat() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        Chat with Inventory Assistant
+        Chat with Sahaayak
       </motion.h2>
 
       <div className="bg-white border border-gray-200 rounded-lg shadow p-4 h-[400px] overflow-y-auto space-y-3 mb-4">
@@ -58,13 +69,55 @@ export default function Chat() {
               initial={{ opacity: 0, x: msg.sender === "user" ? 50 : -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.2 }}
-              className={`p-3 rounded max-w-[75%] ${
+              className={`p-3 rounded max-w-[90%] ${
                 msg.sender === "user"
                   ? "ml-auto bg-emerald-100 text-right text-emerald-800"
                   : "mr-auto bg-gray-100 text-left text-gray-800"
               }`}
             >
-              {msg.text}
+              <div className="whitespace-pre-wrap">{msg.text}</div>
+
+              {msg.query && (
+                <div className="mt-2 text-xs text-gray-500 font-mono">
+                  <strong>Query:</strong> {msg.query}
+                </div>
+              )}
+
+              {msg.error && (
+                <div className="mt-2 text-sm text-red-600 font-medium">
+                  ⚠️ Error: {msg.error}
+                </div>
+              )}
+
+              {msg.table && (
+                <div className="overflow-x-auto mt-3">
+                  <table className="w-full text-sm border border-gray-300">
+                    <thead className="bg-emerald-100 text-emerald-800">
+                      <tr>
+                        {msg.table.columns.map((col) => (
+                          <th key={col} className="px-2 py-1 border">
+                            {col}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {msg.table.rows.map((row, rowIndex) => (
+                        <tr
+                          key={rowIndex}
+                          className="border-t hover:bg-gray-50"
+                        >
+                          {msg.table.columns.map((col) => (
+                            <td key={col} className="px-2 py-1 border">
+                              {row[col]}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </motion.div>
           ))
         )}
@@ -76,7 +129,8 @@ export default function Chat() {
           placeholder="Ask about prices, stock, etc..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="flex-grow border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+          disabled={loading}
+          className="flex-grow border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-300 disabled:opacity-50"
         />
         <button
           type="submit"

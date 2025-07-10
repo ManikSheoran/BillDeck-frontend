@@ -99,7 +99,7 @@ export default function InventoryList() {
                 <th className="px-4 py-3 border">Purchase Price</th>
                 <th className="px-4 py-3 border">Sale Price</th>
                 <th className="px-4 py-3 border">Quantity</th>
-                <th className="px-4 py-3 border text-center">Actions</th>
+                {/* <th className="px-4 py-3 border text-center">Actions</th> */}
               </tr>
             </thead>
 
@@ -136,14 +136,14 @@ export default function InventoryList() {
                         ₹{product.price_sale}
                       </td>
                       <td className="border px-4 py-2">{product.quantity}</td>
-                      <td className="border px-4 py-2 text-center">
+                      {/* <td className="border px-4 py-2 text-center">
                         <button
                           onClick={() => handleDelete(product.product_id)}
                           className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1 mx-auto"
                         >
                           <Trash2 className="w-4 h-4" /> Delete
                         </button>
-                      </td>
+                      </td> */}
                     </motion.tr>
                   ))
                 )}
