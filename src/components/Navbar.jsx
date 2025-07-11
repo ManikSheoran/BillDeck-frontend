@@ -15,8 +15,8 @@ const navLinks = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/inventory", label: "Inventory", icon: Boxes },
   { to: "/billing", label: "Billing", icon: FileText },
-  { to: "/udhaar/sales", label: "Sales on Udhaar", icon: HandCoins },
-  { to: "/udhaar/purchases", label: "Purchases on Udhaar", icon: ShoppingCart },
+  { to: "/udhaar/sales", label: "Sales Udhaar", icon: HandCoins },
+  { to: "/udhaar/purchases", label: "Purchases Udhaar", icon: ShoppingCart },
   { to: "/chat", label: "Sahaayak AI", icon: BotMessageSquare  },
 ];
 

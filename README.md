@@ -39,7 +39,7 @@ A modern, feature-rich web application for managing sales, purchases, inventory,
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/billdeck-frontend.git
+    git clone https://github.com/maniksheoran/Billdeck-frontend.git
     cd billdeck-frontend
     ```
 

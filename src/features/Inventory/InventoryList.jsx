@@ -131,7 +131,7 @@ export default function InventoryList() {
                         {product.product_name}
                       </td>
                       <td className="border px-4 py-2">
-                        ₹{product.price_purchase}
+                        ₹{Math.floor(product.price_purchase * 100) / 100}
                       </td>
                       <td className="border px-4 py-2">
                         ₹{product.price_sale}
