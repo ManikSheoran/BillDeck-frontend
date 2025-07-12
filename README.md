@@ -1,4 +1,4 @@
-# BillDeck
+# Dukaan Sahaayak
 
 A modern, feature-rich web application for managing sales, purchases, inventory, and credit (udhaar) for small businesses. Built with React and Tailwind CSS.
 
@@ -33,14 +33,14 @@ A modern, feature-rich web application for managing sales, purchases, inventory,
 
 *   Node.js (v16 or higher recommended)
 *   npm or yarn
-*   A running instance of the **BillDeck Backend**. This frontend requires the backend API to function.
+*   A running instance of the **DukaanSahaayak server**. This frontend requires the backend API to function.
 
 ### Installation & Setup
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/maniksheoran/Billdeck-frontend.git
-    cd billdeck-frontend
+    git clone https://github.com/maniksheoran/DukaanSahaayak-client
+    cd DukaanSahaayak-client
     ```
 
 2.  **Install dependencies:**
