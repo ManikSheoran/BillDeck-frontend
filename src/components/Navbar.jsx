@@ -15,8 +15,8 @@ const navLinks = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/inventory", label: "Inventory", icon: Boxes },
   { to: "/billing", label: "Billing", icon: FileText },
-  { to: "/udhaar/sales", label: "Sales Udhaar", icon: HandCoins },
-  { to: "/udhaar/purchases", label: "Purchases Udhaar", icon: ShoppingCart },
+  { to: "/udhaar/sales", label: "Customer Udhaar", icon: HandCoins },
+  { to: "/udhaar/purchases", label: "Vendor Payable", icon: ShoppingCart },
   { to: "/chat", label: "Sahaayak AI", icon: BotMessageSquare  },
 ];
 
@@ -32,7 +32,7 @@ export default function Navbar() {
           to="/"
           className="text-2xl font-bold tracking-tight text-white hover:opacity-90 transition"
         >
-          BillDeck
+          <img src="/logo.png" alt="BillDeck Logo" className="h-10 w-auto" />
         </Link>
 
         <div className="hidden md:flex items-center gap-1">

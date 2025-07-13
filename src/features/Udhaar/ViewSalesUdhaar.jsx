@@ -47,7 +47,7 @@ export default function ViewSalesUdhaar() {
         transition={{ duration: 0.5 }}
         className="text-3xl font-bold text-emerald-700 mb-6"
       >
-        Sales Udhaar
+        Customer Udhaar
       </motion.h2>
 
       {udhaarList.length === 0 ? (

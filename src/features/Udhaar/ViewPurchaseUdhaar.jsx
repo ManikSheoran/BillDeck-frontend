@@ -51,7 +51,7 @@ export default function ViewPurchaseUdhaar() {
         transition={{ duration: 0.5 }}
         className="text-3xl font-bold text-emerald-700 mb-6"
       >
-        Purchase Udhaar
+        Vendor Payable
       </motion.h2>
 
       {udhaarList.length === 0 ? (
