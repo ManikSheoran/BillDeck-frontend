@@ -5,6 +5,8 @@ import { Trash2, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 export default function InventoryList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export default function InventoryList() {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8000/api/products/", {
+      await axios.post(`${BASE_URL}/api/products/`, {
         ...newProduct,
         price_purchase: parseFloat(newProduct.price_purchase),
         price_sale: parseFloat(newProduct.price_sale),

@@ -11,7 +11,8 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
-/* --- Main Component --- */
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 export default function SaleDetails() {
   const { saleId } = useParams();
   const [sale, setSale] = useState(null);
@@ -27,7 +28,7 @@ export default function SaleDetails() {
         setLoading(false);
         if (res.data?.customer_id) {
           axios
-            .get(`http://localhost:8000/api/customers/${res.data.customer_id}`)
+            .get(`${BASE_URL}/api/customers/${res.data.customer_id}`)
             .then((cRes) => setCustomerName(cRes.data.customer_name))
             .catch(() => setCustomerName(""));
         }

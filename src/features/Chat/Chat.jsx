@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { SendHorizonal, Loader2 } from "lucide-react";
 import { Typewriter } from "react-simple-typewriter";
 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;  
+
 export default function Chat() {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,7 +21,7 @@ export default function Chat() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/ai/sql/", null, {
+      const res = await axios.post(`${BASE_URL}/api/ai/sql/`, null, {
         params: { prompt: userMessage },
       });
 

@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 export default function PurchaseDetails() {
   const { purchaseId } = useParams();
   const [purchase, setPurchase] = useState(null);
@@ -26,7 +28,7 @@ export default function PurchaseDetails() {
         setLoading(false);
         if (res.data?.vendor_id) {
           axios
-            .get(`http://localhost:8000/api/vendors/${res.data.vendor_id}`)
+            .get(`${BASE_URL}/api/vendors/${res.data.vendor_id}`)
             .then((vRes) => setVendorName(vRes.data.vendor_name))
             .catch(() => setVendorName(""));
         }

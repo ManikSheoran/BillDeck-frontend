@@ -4,46 +4,47 @@ A modern, feature-rich web application for managing sales, purchases, inventory,
 
 ## ✨ Key Features
 
-*   **Interactive Dashboard:** Get a quick overview of your business with stats on today's sales, total transactions, and outstanding credit. Includes a 7-day profit/loss chart.
-*   **Inventory Management:** Easily add, view, and delete products from your inventory. Low-stock items are automatically highlighted.
-*   **Smart Billing:** A unified interface to create detailed bills for both sales and purchases.
-*   **AI-Powered Bill Scanning:** Upload an image of a bill, and the application will automatically extract the products and quantities, saving you manual entry time.
-*   **AI-Powered Data Chat (Shaayak):** Ask questions in natural language to query your sales, inventory, and financial data. Get instant answers, the generated SQL, and results in a clear table format.
-*   **Udhaar (Credit) Tracking:** Keep a clear record of sales and purchases made on credit. Easily mark them as cleared once the payment is settled.
-*   **PDF Generation:** Instantly generate and download professional-looking PDF invoices for sales and receipts for purchases.
-*   **Due Date Notifications:** Stay on top of your finances with a dedicated page for notifications about upcoming udhaar payment due dates.
-*   **Modern & Responsive UI:** A clean, intuitive, and fully responsive user interface built with Tailwind CSS and enhanced with smooth animations using Framer Motion.
-
+- **Interactive Dashboard:** Get a quick overview of your business with stats on today's sales, total transactions, and outstanding credit. Includes a 7-day profit/loss chart.
+- **Inventory Management:** Easily add, view, and delete products from your inventory. Low-stock items are automatically highlighted.
+- **Smart Billing:** A unified interface to create detailed bills for both sales and purchases.
+- **AI-Powered Bill Scanning:** Upload an image of a bill, and the application will automatically extract the products and quantities, saving you manual entry time.
+- **AI-Powered Data Chat (Shaayak):** Ask questions in natural language to query your sales, inventory, and financial data. Get instant answers, the generated SQL, and results in a clear table format.
+- **Udhaar (Credit) Tracking:** Keep a clear record of sales and purchases made on credit. Easily mark them as cleared once the payment is settled.
+- **PDF Generation:** Instantly generate and download professional-looking PDF invoices for sales and receipts for purchases.
+- **Due Date Notifications:** Stay on top of your finances with a dedicated page for notifications about upcoming udhaar payment due dates.
+- **Modern & Responsive UI:** A clean, intuitive, and fully responsive user interface built with Tailwind CSS and enhanced with smooth animations using Framer Motion.
 
 ## 🛠️ Tech Stack
 
-*   **Frontend:** [React.js](https://reactjs.org/), [Vite](https://vitejs.dev/)
-*   **Routing:** [React Router](https://reactrouter.com/)
-*   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-*   **State Management:** React Hooks (`useState`, `useEffect`, `useRef`)
-*   **API Communication:** Axios
-*   **Animations:** Framer Motion
-*   **Charting:** Recharts
-*   **PDF Generation:** jsPDF & jsPDF-AutoTable
-*   **Icons:** Lucide React
+- **Frontend:** [React.js](https://reactjs.org/), [Vite](https://vitejs.dev/)
+- **Routing:** [React Router](https://reactrouter.com/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **State Management:** React Hooks (`useState`, `useEffect`, `useRef`)
+- **API Communication:** Axios
+- **Animations:** Framer Motion
+- **Charting:** Recharts
+- **PDF Generation:** jsPDF & jsPDF-AutoTable
+- **Icons:** Lucide React
 
 ## ⚙️ Getting Started
 
 ### Prerequisites
 
-*   Node.js (v16 or higher recommended)
-*   npm or yarn
-*   A running instance of the **DukaanSahaayak server**. This frontend requires the backend API to function.
+- Node.js (v16 or higher recommended)
+- npm or yarn
+- A running instance of the **DukaanSahaayak server**. This frontend requires the backend API to function.
 
 ### Installation & Setup
 
 1.  **Clone the repository:**
+
     ```bash
     git clone https://github.com/maniksheoran/DukaanSahaayak-client
     cd DukaanSahaayak-client
     ```
 
 2.  **Install dependencies:**
+
     ```bash
     npm install
     # or
@@ -51,13 +52,14 @@ A modern, feature-rich web application for managing sales, purchases, inventory,
     ```
 
 3.  **Environment Variables:**
+    This project uses Vite and requires an environment variable to connect to the backend API.
 
-    This project communicates with a backend API. By default, it expects the backend to be running at `http://localhost:8000`. If your backend is on a different URL, you should centralize the hardcoded URLs into a single configuration file or use environment variables.
-
-    For a Vite project, you can create a `.env` file in the root of the project and add the following:
+    1. Create a `.env` file in the root directory by copying the example:
+       `cp .env.example .env`
+    2. Open the `.env` file and ensure `VITE_BACKEND_URL` points to your backend server. By default, it is:
 
     ```
-    VITE_API_BASE_URL=http://your-backend-api-url
+    VITE_BACKEND_URL=http://localhost:8000
     ```
 
 4.  **Run the development server:**
@@ -86,4 +88,4 @@ src/
 └── main.jsx          # Entry point of the application
 ```
 
-* Backend Code - [DukaanSahaayak Server](https://github.com/ManikSheoran/DukaanSahaayak-server) 
+- Backend Code - [DukaanSahaayak Server](https://github.com/ManikSheoran/DukaanSahaayak-server)

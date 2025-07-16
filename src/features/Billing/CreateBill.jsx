@@ -7,6 +7,8 @@ import jsPDF from "jspdf";
 import axios from "axios";
 import autoTable from "jspdf-autotable";
 
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 export default function CreateBill() {
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
@@ -93,10 +95,10 @@ export default function CreateBill() {
   const handlePhoneNumberChange = async (phoneVal) => {
     try {
       const [res1, res2] = await Promise.allSettled([
-        axios.get("http://localhost:8000/api/customers", {
+        axios.get(`${BASE_URL}/api/customers`, {
           params: { customer_phone_no: phoneVal },
         }),
-        axios.get("http://localhost:8000/api/vendors", {
+        axios.get(`${BASE_URL}/api/vendors`, {
           params: { vendor_phone_no: phoneVal },
         }),
       ]);
@@ -128,7 +130,7 @@ export default function CreateBill() {
     setUploading(true);
     try {
       const res = await axios.post(
-        "http://localhost:8000/api/extract-products",
+        `${BASE_URL}/api/extract-products`,
         formData,
         {
           headers: {
